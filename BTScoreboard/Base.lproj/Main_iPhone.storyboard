@@ -111,7 +111,7 @@
                     <simulatedOrientationMetrics key="simulatedOrientationMetrics" orientation="landscapeRight"/>
                     <connections>
                         <outlet property="homeScore" destination="jsf-Ke-BnS" id="yCF-4g-es1"/>
-                        <outlet property="time" destination="8Rk-FJ-Tyl" id="RxV-Ix-mOw"/>
+                        <outlet property="timeDisplay" destination="8Rk-FJ-Tyl" id="2Td-RF-AIs"/>
                         <outlet property="visitorScore" destination="kq8-he-ann" id="oTl-gj-57w"/>
                     </connections>
                 </viewController>

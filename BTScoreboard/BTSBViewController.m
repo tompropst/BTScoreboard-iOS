@@ -2,9 +2,27 @@
 //  BTSBViewController.m
 //  BTScoreboard
 //
-//  Created by Thomas Propst on 12/2/13.
-//  Copyright (c) 2013 Thomas Propst. All rights reserved.
+// The MIT License (MIT)
 //
+// Copyright (c) 2013 Thomas Propst
+//
+// Permission is hereby granted, free of charge, to any person obtaining a copy
+// of this software and associated documentation files (the "Software"), to deal
+// in the Software without restriction, including without limitation the rights
+// to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+// copies of the Software, and to permit persons to whom the Software is
+// furnished to do so,subject to the following conditions:
+//
+// The above copyright notice and this permission notice shall be included in
+// all copies or substantial portions of the Software.
+//
+// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+// IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+// FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+// AUTHORS ORCOPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+// LIABILITY, WHETHERIN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+// OUT OF OR INCONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+// SOFTWARE.
 
 #import "BTSBViewController.h"
 
@@ -12,13 +30,13 @@
 - (IBAction)homeScoreChange:(id)sender;
 - (IBAction)visitorSccoreChange:(id)sender;
 - (IBAction)timeStartStop:(id)sender;
+- (IBAction)resetClick:(id)sender;
 @property (weak, nonatomic) IBOutlet UIButton *homeScore;
 @property int homeScoreValue;
 @property (weak, nonatomic) IBOutlet UIButton *visitorScore;
 @property int visitorScoreValue;
-@property (weak, nonatomic) IBOutlet UIButton *time;
-@property int timeSeconds;
-- (IBAction)resetClick:(id)sender;
+@property (weak, nonatomic) IBOutlet UIButton *timeDisplay;
+@property int gameTimeSeconds;
 
 @end
 
@@ -45,13 +63,17 @@ NSTimer *gameTimer;
 	// Do any additional setup after loading the view, typically from a nib.
     
     // Allocate the CB central manager as a delegate
-    cbCentralManager = [[CBCentralManager alloc] initWithDelegate:self queue:nil options:nil];
+    cbCentralManager = [[CBCentralManager alloc] initWithDelegate:self
+                                                            queue:nil
+                                                          options:nil];
     // Service and characteristic UUID's defined by TI BLE devices
-    simpleKeyServiceUuid  = [CBUUID UUIDWithString:@"0000ffe0-0000-1000-8000-00805f9b34fb"];
-    simpleKeyCharUuid = [CBUUID UUIDWithString:@"0000ffe1-0000-1000-8000-00805f9b34fb"];
+    simpleKeyServiceUuid  = [CBUUID
+                    UUIDWithString:@"0000ffe0-0000-1000-8000-00805f9b34fb"];
+    simpleKeyCharUuid = [CBUUID
+                    UUIDWithString:@"0000ffe1-0000-1000-8000-00805f9b34fb"];
     
     // Initialize the game parameters
-    self.timeSeconds = 15 * 60;
+    self.gameTimeSeconds = 15 * 60;
     self.homeScoreValue = 0;
     self.visitorScoreValue = 0;
     [self updateBoard];
@@ -67,9 +89,11 @@ NSTimer *gameTimer;
 - (void) updateBoard
 {
     [self updateTimer];
-    NSString *homeString = [NSString stringWithFormat:@"%02d", self.homeScoreValue];
+    NSString *homeString = [NSString stringWithFormat:@"%02d",
+                            self.homeScoreValue];
     [self.homeScore setTitle:homeString forState:UIControlStateNormal];
-    NSString *visitorString = [NSString stringWithFormat:@"%02d", self.visitorScoreValue];
+    NSString *visitorString = [NSString stringWithFormat:@"%02d",
+                               self.visitorScoreValue];
     [self.visitorScore setTitle:visitorString forState:UIControlStateNormal];
     
 }
@@ -79,18 +103,18 @@ NSTimer *gameTimer;
     // The button title flashes when the title is changed.
     // Removing this annoyance when the timer updates.
     [UIView setAnimationsEnabled:NO];
-    int mins = (int) (self.timeSeconds / 60);
-    int secs = self.timeSeconds - (mins * 60);
+    int mins = (int) (self.gameTimeSeconds / 60);
+    int secs = self.gameTimeSeconds - (mins * 60);
     NSString *timeString = [NSString stringWithFormat:@"%02d:%02d", mins, secs];
-    [self.time setTitle:timeString forState:UIControlStateNormal];
+    [self.timeDisplay setTitle:timeString forState:UIControlStateNormal];
     [UIView setAnimationsEnabled:YES];
 }
 
 - (void) tickTimer
 {
     //NSLog(@"Time: %d", self.timeSeconds);
-    self.timeSeconds--;
-    if(self.timeSeconds > 0)
+    self.gameTimeSeconds--;
+    if(self.gameTimeSeconds > 0)
     {
         [self updateTimer];
         return;
@@ -113,7 +137,8 @@ NSTimer *gameTimer;
         // if the BT stack is powered on...
         NSLog(@"BT powered on");
         // Begin scanning for TI keys
-        // No services are specified because the TI keys don't advertise services by default
+        // No services are specified because the TI keys don't advertise
+        // services by default
         NSLog(@"Scanning for peripherals");
         [central scanForPeripheralsWithServices:nil options:nil];
     } else
@@ -123,13 +148,14 @@ NSTimer *gameTimer;
 }
 
 // This method is implemented for the CB central manager delegate
-- (void)centralManager:(CBCentralManager *)central didDiscoverPeripheral:(CBPeripheral *)peripheral advertisementData:(NSDictionary *)advertisementData RSSI:(NSNumber *)RSSI
+- (void)centralManager:(CBCentralManager *)central
+ didDiscoverPeripheral:(CBPeripheral *)peripheral
+     advertisementData:(NSDictionary *)advertisementData
+                  RSSI:(NSNumber *)RSSI
 {
-    //NSString *logString = [NSString stringWithFormat:@"Discovered %@\n- %@\n", peripheral.name, peripheral.identifier];
-    //NSLog(@"%@", logString);
-    
-    // The name seems like the only way to filter these tags out of the box without connecting to them
-    // Connecting to them may not be that bad and surely would be more reliable
+    // The name seems like the only way to filter these tags out of the box
+    // without connecting to them.
+    // Connecting to them may not be that bad and surely would be more reliable.
     if ([peripheral.name compare:@"TI BLE Sensor Tag"] == NSOrderedSame)
     {
         NSLog(@"Discovered TI BLE Sensor Tag");
@@ -143,15 +169,19 @@ NSTimer *gameTimer;
     }
 }
 
-- (void)centralManager:(CBCentralManager *)central didConnectPeripheral:(CBPeripheral *)peripheral
+- (void)centralManager:(CBCentralManager *)central
+  didConnectPeripheral:(CBPeripheral *)peripheral
 {
     NSLog(@"Connected to peripheral");
     peripheral.delegate = self;
-    [peripheral discoverServices:[NSArray arrayWithObject:simpleKeyServiceUuid]];
+    [peripheral discoverServices:[NSArray
+                                  arrayWithObject:simpleKeyServiceUuid]];
     
 }
 
-- (void)centralManager:(CBCentralManager *)central didFailToConnectPeripheral:(CBPeripheral *)peripheral error:(NSError *)error
+- (void)centralManager:(CBCentralManager *)central
+didFailToConnectPeripheral:(CBPeripheral *)peripheral
+                 error:(NSError *)error
 {
     NSLog(@"Peripheral connection failed");
     NSLog(@"Scanning for peripherals");
@@ -159,7 +189,8 @@ NSTimer *gameTimer;
     
 }
 
-- (void) peripheral:(CBPeripheral *)peripheral didDiscoverServices:(NSError *)error
+- (void) peripheral:(CBPeripheral *)peripheral
+didDiscoverServices:(NSError *)error
 {
     if (error == nil)
     {
@@ -169,7 +200,8 @@ NSTimer *gameTimer;
         }
         for (CBService *service in peripheral.services) {
             NSLog(@"Discovered simple key service %@", service.description);
-            [peripheral discoverCharacteristics:[NSArray arrayWithObject:simpleKeyCharUuid] forService:service];
+            [peripheral discoverCharacteristics:
+             [NSArray arrayWithObject:simpleKeyCharUuid] forService:service];
             break;
         }
         return;
@@ -180,7 +212,9 @@ NSTimer *gameTimer;
     
 }
 
-- (void) peripheral:(CBPeripheral *)peripheral didDiscoverCharacteristicsForService:(CBService *)service error:(NSError *)error
+- (void) peripheral:(CBPeripheral *)peripheral
+didDiscoverCharacteristicsForService:(CBService *)service
+              error:(NSError *)error
 {
     if(error == nil)
     {
@@ -202,7 +236,9 @@ NSTimer *gameTimer;
     [cbCentralManager scanForPeripheralsWithServices:nil options:nil];
 }
 
-- (void) peripheral:(CBPeripheral *)peripheral didUpdateNotificationStateForCharacteristic:(CBCharacteristic *)characteristic error:(NSError *)error
+- (void) peripheral:(CBPeripheral *)peripheral
+didUpdateNotificationStateForCharacteristic:(CBCharacteristic *)characteristic
+              error:(NSError *)error
 {
     if(error == nil)
     {
@@ -212,12 +248,16 @@ NSTimer *gameTimer;
     NSLog(@"Subscription failed: %@", [error localizedDescription]);
 }
 
-- (void) peripheral:(CBPeripheral *)peripheral didUpdateValueForCharacteristic:(CBCharacteristic *)characteristic error:(NSError *)error
+- (void) peripheral:(CBPeripheral *)peripheral
+didUpdateValueForCharacteristic:(CBCharacteristic *)characteristic
+              error:(NSError *)error
 {
     double timeNow = CACurrentMediaTime();
     // The key value should be two bytes
     int keyValue = *(int *)([characteristic.value bytes]);
     // NSLog(@"Key value: %d", keyValue);
+    
+    // Is this a new key event or part of an in-process key event?
     double timeGap = timeNow - lastKeyEventTime;
     if((timeGap > tapTime) || (!clickStarted))
     {
@@ -229,6 +269,13 @@ NSTimer *gameTimer;
     lastKeyEventTime = CACurrentMediaTime();
     
 }
+
+// The key events (key down and key up) are interpretted as:
+// - left key click
+// - right key click
+// - multi key click (both keys together)
+// A "click" is a key down / up within "tapTime".  Holding keys longer than
+// tapTime negates the action (but can be used later for a "long click").
 
 - (void) startNewClick:(int)keyValue
 {
@@ -306,7 +353,10 @@ NSTimer *gameTimer;
 - (void) startTimer
 {
     NSLog(@"Starting timer");
-    gameTimer = [NSTimer scheduledTimerWithTimeInterval:1 target:self selector:@selector(tickTimer) userInfo:nil repeats:YES];
+    gameTimer = [NSTimer scheduledTimerWithTimeInterval:1
+                                                 target:self
+                                               selector:@selector(tickTimer)
+                                               userInfo:nil repeats:YES];
 }
 
 - (void) stopTimer
@@ -333,11 +383,12 @@ NSTimer *gameTimer;
     }
     [self startTimer];
 }
+
 - (IBAction)resetClick:(id)sender {
     [self stopTimer];
     self.homeScoreValue = 0;
     self.visitorScoreValue = 0;
-    self.timeSeconds = 15 * 60;
+    self.gameTimeSeconds = 15 * 60;
     [self updateBoard];
 }
 
