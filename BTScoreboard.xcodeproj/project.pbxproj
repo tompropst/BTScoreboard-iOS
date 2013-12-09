@@ -22,6 +22,8 @@
 		65767D9D184D7D9700734FED /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 65767D7C184D7D9700734FED /* UIKit.framework */; };
 		65767DA5184D7D9700734FED /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 65767DA3184D7D9700734FED /* InfoPlist.strings */; };
 		65767DA7184D7D9700734FED /* BTScoreboardTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 65767DA6184D7D9700734FED /* BTScoreboardTests.m */; };
+		65767DB1184D7DD200734FED /* CoreBluetooth.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 65767DB0184D7DD200734FED /* CoreBluetooth.framework */; };
+		65E2F1A71855632E00D439C5 /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 65E2F1A61855632E00D439C5 /* QuartzCore.framework */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -55,6 +57,8 @@
 		65767DA2184D7D9700734FED /* BTScoreboardTests-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "BTScoreboardTests-Info.plist"; sourceTree = "<group>"; };
 		65767DA4184D7D9700734FED /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		65767DA6184D7D9700734FED /* BTScoreboardTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = BTScoreboardTests.m; sourceTree = "<group>"; };
+		65767DB0184D7DD200734FED /* CoreBluetooth.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreBluetooth.framework; path = System/Library/Frameworks/CoreBluetooth.framework; sourceTree = SDKROOT; };
+		65E2F1A61855632E00D439C5 /* QuartzCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuartzCore.framework; path = System/Library/Frameworks/QuartzCore.framework; sourceTree = SDKROOT; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -62,6 +66,8 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				65E2F1A71855632E00D439C5 /* QuartzCore.framework in Frameworks */,
+				65767DB1184D7DD200734FED /* CoreBluetooth.framework in Frameworks */,
 				65767D7B184D7D9700734FED /* CoreGraphics.framework in Frameworks */,
 				65767D7D184D7D9700734FED /* UIKit.framework in Frameworks */,
 				65767D79184D7D9700734FED /* Foundation.framework in Frameworks */,
@@ -103,6 +109,8 @@
 		65767D77184D7D9700734FED /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				65E2F1A61855632E00D439C5 /* QuartzCore.framework */,
+				65767DB0184D7DD200734FED /* CoreBluetooth.framework */,
 				65767D78184D7D9700734FED /* Foundation.framework */,
 				65767D7A184D7D9700734FED /* CoreGraphics.framework */,
 				65767D7C184D7D9700734FED /* UIKit.framework */,
@@ -475,6 +483,7 @@
 				65767DAC184D7D9700734FED /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		65767DAD184D7D9700734FED /* Build configuration list for PBXNativeTarget "BTScoreboardTests" */ = {
 			isa = XCConfigurationList;
@@ -483,6 +492,7 @@
 				65767DAF184D7D9700734FED /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};
