@@ -381,6 +381,7 @@ didUpdateValueForCharacteristic:(CBCharacteristic *)characteristic
                                                  target:self
                                                selector:@selector(tickTimer)
                                                userInfo:nil repeats:YES];
+    [[UIApplication sharedApplication] setIdleTimerDisabled: YES];
 }
 
 - (void) stopTimer
@@ -414,6 +415,7 @@ didUpdateValueForCharacteristic:(CBCharacteristic *)characteristic
     self.visitorScoreValue = 0;
     self.gameTimeSeconds = 15 * 60;
     [self updateBoard];
+    [[UIApplication sharedApplication] setIdleTimerDisabled: NO];
 }
 
 
