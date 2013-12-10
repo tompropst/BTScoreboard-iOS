@@ -55,6 +55,15 @@ int lastKeyEventCode;
 double lastKeyClickTime;
 int lastKeyClickCode;
 
+// Right / left keys on the sensor tag are switched compared to the fob.
+// Need to keep track of which type of device is connected.
+enum deviceType
+{
+    none,
+    tiSensorTag,
+    tiKeyFob
+} connectedDevice;
+
 NSTimer *gameTimer;
 
 - (void)viewDidLoad
@@ -84,6 +93,8 @@ NSTimer *gameTimer;
     clickStarted = false;
     lastKeyEventCode = 0;
     lastKeyClickCode = 0;
+    
+    connectedDevice = none;
 }
 
 - (void) updateBoard
@@ -158,14 +169,25 @@ NSTimer *gameTimer;
     // Connecting to them may not be that bad and surely would be more reliable.
     if ([peripheral.name compare:@"TI BLE Sensor Tag"] == NSOrderedSame)
     {
-        NSLog(@"Discovered TI BLE Sensor Tag");
+        NSLog(@"Discovered TI Sensor Tag");
+        connectedDevice = tiSensorTag;
+    }
+    else if ([peripheral.name compare:@"TI BLE Keyfob"] == NSOrderedSame)
+    {
+        NSLog(@"Discovered TI Key Fob");
+        connectedDevice = tiKeyFob;
+    }
+    if(connectedDevice != none)
+    {
         cbPeripheral = peripheral;
         [cbCentralManager stopScan];
         NSLog(@"Stopped scanning for peripherals");
         [cbCentralManager connectPeripheral:peripheral options:nil];
-    }else
+    }
+    else
     {
         NSLog(@"Discovered something other than a TI Tag");
+        NSLog(@"%@", peripheral.name);
     }
 }
 
@@ -303,14 +325,16 @@ didUpdateValueForCharacteristic:(CBCharacteristic *)characteristic
             switch (lastKeyEventCode) {
                 case 1:
                     lastKeyClickCode = 1;
-                    NSLog(@"Right Click");
-                    self.visitorScoreValue++;
+                    NSLog(@"Left Click");
+                    if(connectedDevice == tiSensorTag) self.visitorScoreValue++;
+                    else self.homeScoreValue++;
                     [self updateBoard];
                     break;
                 case 2:
                     lastKeyClickCode = 2;
-                    NSLog(@"Left Click");
-                    self.homeScoreValue++;
+                    NSLog(@"Right Click");
+                    if(connectedDevice == tiSensorTag) self.homeScoreValue++;
+                    else self.visitorScoreValue++;
                     [self updateBoard];
                     break;
                 case 3:
