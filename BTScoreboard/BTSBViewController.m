@@ -72,6 +72,8 @@ int gameLength;
 CFURLRef buzzerFileUrl;
 SystemSoundID buzzerSoundId;
 
+const int gameLengthOptions[] = {1,2,3,4,5,6,7,8,9,10,15,20,30,45,60,90};
+
 - (void)viewDidLoad
 {
     [super viewDidLoad];
@@ -88,10 +90,12 @@ SystemSoundID buzzerSoundId;
                     UUIDWithString:@"0000ffe1-0000-1000-8000-00805f9b34fb"];
     
     // Initialize the game parameters
-    gameLength = 15 * 1; //seconds
-    self.gameTimeSeconds = gameLength;
     self.homeScoreValue = 0;
     self.visitorScoreValue = 0;
+    // Default to 10 minute game
+    gameLength = gameLengthOptions[9] * 60;
+    self.gameTimeSeconds = gameLength;
+    [_gameLengthPicker selectRow:9 inComponent:0 animated:NO];
     [self updateBoard];
     
     // Initialize timers and codes used for key events
@@ -107,6 +111,8 @@ SystemSoundID buzzerSoundId;
                                          URLForResource: @"buzzer"
                                          withExtension: @"mp3"];
     AudioServicesCreateSystemSoundID (buzzerFileUrl, &buzzerSoundId);
+    
+    
 }
 
 - (void) dealloc
@@ -114,6 +120,31 @@ SystemSoundID buzzerSoundId;
     AudioServicesDisposeSystemSoundID(buzzerSoundId);
     CFRelease(buzzerFileUrl);
 }
+
+- (NSInteger)numberOfComponentsInPickerView:(UIPickerView *)pickerView
+{
+    return 1;
+}
+
+- (NSInteger)pickerView:(UIPickerView *)pickerView
+    numberOfRowsInComponent:(NSInteger)component
+{
+    return sizeof(gameLengthOptions)/sizeof(gameLengthOptions[0]);
+}
+
+- (NSString *)pickerView:(UIPickerView *)pickerView
+             titleForRow:(NSInteger)row forComponent:(NSInteger)component
+{
+    return [NSString stringWithFormat:@"%d",gameLengthOptions[row]];
+}
+
+- (void)pickerView:(UIPickerView *)pickerView
+      didSelectRow:(NSInteger)row inComponent:(NSInteger)component
+{
+    gameLength = gameLengthOptions[row] * 60;
+
+}
+
 
 - (void) updateBoard
 {

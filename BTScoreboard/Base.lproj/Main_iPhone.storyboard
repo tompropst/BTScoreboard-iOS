@@ -86,30 +86,53 @@
                                     <action selector="resetClick:" destination="vXZ-lx-hvc" eventType="touchUpInside" id="yXh-7M-Rch"/>
                                 </connections>
                             </button>
+                            <pickerView contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="fY5-re-U7A">
+                                <rect key="frame" x="312" y="79" width="100" height="162"/>
+                                <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMaxY="YES"/>
+                                <constraints>
+                                    <constraint firstAttribute="width" constant="100" id="Gjv-vT-76l"/>
+                                </constraints>
+                                <connections>
+                                    <outlet property="dataSource" destination="vXZ-lx-hvc" id="CII-Is-Lzb"/>
+                                    <outlet property="delegate" destination="vXZ-lx-hvc" id="tSN-y5-Dih"/>
+                                </connections>
+                            </pickerView>
+                            <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Game Length (min)" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="n4g-OL-f60">
+                                <rect key="frame" x="158" y="150" width="146" height="21"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
+                                <nil key="highlightedColor"/>
+                            </label>
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
                         <constraints>
                             <constraint firstAttribute="bottom" secondItem="ffg-FC-YYA" secondAttribute="bottom" constant="11" id="B7T-gp-1rU"/>
+                            <constraint firstAttribute="centerX" secondItem="fY5-re-U7A" secondAttribute="centerX" constant="-77.5" id="CzF-Nm-WpF"/>
                             <constraint firstItem="jsf-Ke-BnS" firstAttribute="leading" secondItem="kh9-bI-dsS" secondAttribute="leading" constant="20" id="Jo3-BZ-JCj"/>
                             <constraint firstItem="cD3-v9-2Yh" firstAttribute="top" secondItem="8Rk-FJ-Tyl" secondAttribute="bottom" constant="8" symbolic="YES" id="L5R-Mw-Z8b"/>
                             <constraint firstItem="v3A-G7-CQh" firstAttribute="leading" secondItem="kh9-bI-dsS" secondAttribute="leading" constant="20" id="RBa-oT-g9b"/>
                             <constraint firstItem="ffg-FC-YYA" firstAttribute="centerX" secondItem="8Rk-FJ-Tyl" secondAttribute="centerX" id="Sop-GJ-I9z"/>
                             <constraint firstItem="ffg-FC-YYA" firstAttribute="centerX" secondItem="cD3-v9-2Yh" secondAttribute="centerX" id="WxH-fr-pfn"/>
                             <constraint firstItem="LYU-aa-Lk2" firstAttribute="top" secondItem="kq8-he-ann" secondAttribute="bottom" constant="12" id="YoV-yL-vnc"/>
+                            <constraint firstAttribute="centerY" secondItem="fY5-re-U7A" secondAttribute="centerY" id="ZgP-eC-Pll"/>
                             <constraint firstItem="kq8-he-ann" firstAttribute="bottom" secondItem="jsf-Ke-BnS" secondAttribute="bottom" id="aCt-pW-PSf"/>
                             <constraint firstAttribute="trailing" secondItem="LYU-aa-Lk2" secondAttribute="trailing" constant="20" id="cTu-d6-CFG"/>
                             <constraint firstAttribute="bottom" secondItem="LYU-aa-Lk2" secondAttribute="bottom" constant="16" id="dX3-kv-YLR"/>
                             <constraint firstAttribute="trailing" secondItem="kq8-he-ann" secondAttribute="trailing" constant="20" id="dfI-CY-E4Q"/>
                             <constraint firstItem="kq8-he-ann" firstAttribute="top" secondItem="jsf-Ke-BnS" secondAttribute="top" id="ft7-0k-VuC"/>
                             <constraint firstItem="ffg-FC-YYA" firstAttribute="centerX" secondItem="kh9-bI-dsS" secondAttribute="centerX" id="gud-Vu-i61"/>
+                            <constraint firstAttribute="centerY" secondItem="n4g-OL-f60" secondAttribute="centerY" id="j0Q-aP-QV1"/>
                             <constraint firstItem="8Rk-FJ-Tyl" firstAttribute="top" secondItem="kh9-bI-dsS" secondAttribute="top" constant="20" symbolic="YES" id="ofe-lK-MZj"/>
                             <constraint firstAttribute="trailing" relation="greaterThanOrEqual" secondItem="kq8-he-ann" secondAttribute="trailing" constant="20" id="pZ3-RO-HyH"/>
                             <constraint firstAttribute="bottom" secondItem="v3A-G7-CQh" secondAttribute="bottom" constant="16" id="qvS-lQ-qTM"/>
+                            <constraint firstItem="fY5-re-U7A" firstAttribute="leading" secondItem="n4g-OL-f60" secondAttribute="trailing" constant="8" id="zSP-fO-zLj"/>
                         </constraints>
                         <simulatedOrientationMetrics key="simulatedOrientationMetrics" orientation="landscapeRight"/>
                     </view>
                     <simulatedOrientationMetrics key="simulatedOrientationMetrics" orientation="landscapeRight"/>
                     <connections>
+                        <outlet property="gameLengthPicker" destination="fY5-re-U7A" id="kLE-ax-6tQ"/>
                         <outlet property="homeScore" destination="jsf-Ke-BnS" id="yCF-4g-es1"/>
                         <outlet property="timeDisplay" destination="8Rk-FJ-Tyl" id="2Td-RF-AIs"/>
                         <outlet property="visitorScore" destination="kq8-he-ann" id="oTl-gj-57w"/>

@@ -32,6 +32,7 @@
 
 // The view controller is declared as the CB Central Manager Delegate
 @interface BTSBViewController : UIViewController <CBCentralManagerDelegate,
-CBPeripheralDelegate>
+CBPeripheralDelegate, UIPickerViewDataSource, UIPickerViewDelegate>
+@property (weak, nonatomic) IBOutlet UIPickerView *gameLengthPicker;
 
 @end
