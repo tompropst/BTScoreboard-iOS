@@ -27,6 +27,7 @@
 #import "BTSBViewController.h"
 
 @interface BTSBViewController ()
+
 - (IBAction)homeScoreChange:(id)sender;
 - (IBAction)visitorSccoreChange:(id)sender;
 - (IBAction)timeStartStop:(id)sender;
@@ -66,6 +67,11 @@ enum deviceType
 
 NSTimer *gameTimer;
 
+int gameLength;
+
+CFURLRef buzzerFileUrl;
+SystemSoundID buzzerSoundId;
+
 - (void)viewDidLoad
 {
     [super viewDidLoad];
@@ -82,7 +88,8 @@ NSTimer *gameTimer;
                     UUIDWithString:@"0000ffe1-0000-1000-8000-00805f9b34fb"];
     
     // Initialize the game parameters
-    self.gameTimeSeconds = 15 * 60;
+    gameLength = 15 * 1; //seconds
+    self.gameTimeSeconds = gameLength;
     self.homeScoreValue = 0;
     self.visitorScoreValue = 0;
     [self updateBoard];
@@ -95,6 +102,17 @@ NSTimer *gameTimer;
     lastKeyClickCode = 0;
     
     connectedDevice = none;
+    
+    buzzerFileUrl = (__bridge CFURLRef) [[NSBundle mainBundle]
+                                         URLForResource: @"buzzer"
+                                         withExtension: @"mp3"];
+    AudioServicesCreateSystemSoundID (buzzerFileUrl, &buzzerSoundId);
+}
+
+- (void) dealloc
+{
+    AudioServicesDisposeSystemSoundID(buzzerSoundId);
+    CFRelease(buzzerFileUrl);
 }
 
 - (void) updateBoard
@@ -125,13 +143,13 @@ NSTimer *gameTimer;
 {
     //NSLog(@"Time: %d", self.timeSeconds);
     self.gameTimeSeconds--;
+    [self updateTimer];
     if(self.gameTimeSeconds > 0)
     {
-        [self updateTimer];
         return;
     }
     [self stopTimer];
-    // Buzzer - Audio Toolbox should work for this
+    AudioServicesPlaySystemSound(buzzerSoundId);
 }
 
 - (void)didReceiveMemoryWarning
@@ -413,7 +431,7 @@ didUpdateValueForCharacteristic:(CBCharacteristic *)characteristic
     [self stopTimer];
     self.homeScoreValue = 0;
     self.visitorScoreValue = 0;
-    self.gameTimeSeconds = 15 * 60;
+    self.gameTimeSeconds = gameLength;
     [self updateBoard];
     [[UIApplication sharedApplication] setIdleTimerDisabled: NO];
 }

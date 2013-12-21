@@ -28,6 +28,7 @@
 #import <UIKit/UIKit.h>
 #import <CoreBluetooth/CoreBluetooth.h>
 #import <QuartzCore/CABase.h>
+#import <AudioToolbox/AudioToolbox.h>
 
 // The view controller is declared as the CB Central Manager Delegate
 @interface BTSBViewController : UIViewController <CBCentralManagerDelegate,

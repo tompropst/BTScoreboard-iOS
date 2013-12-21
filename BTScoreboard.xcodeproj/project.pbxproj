@@ -23,6 +23,8 @@
 		65767DA5184D7D9700734FED /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 65767DA3184D7D9700734FED /* InfoPlist.strings */; };
 		65767DA7184D7D9700734FED /* BTScoreboardTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 65767DA6184D7D9700734FED /* BTScoreboardTests.m */; };
 		65767DB1184D7DD200734FED /* CoreBluetooth.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 65767DB0184D7DD200734FED /* CoreBluetooth.framework */; };
+		65969D55186500A4001CDBC2 /* AudioToolbox.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 65969D54186500A4001CDBC2 /* AudioToolbox.framework */; };
+		65969D5718650228001CDBC2 /* buzzer.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = 65969D5618650228001CDBC2 /* buzzer.mp3 */; };
 		65E2F1A71855632E00D439C5 /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 65E2F1A61855632E00D439C5 /* QuartzCore.framework */; };
 /* End PBXBuildFile section */
 
@@ -58,6 +60,8 @@
 		65767DA4184D7D9700734FED /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		65767DA6184D7D9700734FED /* BTScoreboardTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = BTScoreboardTests.m; sourceTree = "<group>"; };
 		65767DB0184D7DD200734FED /* CoreBluetooth.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreBluetooth.framework; path = System/Library/Frameworks/CoreBluetooth.framework; sourceTree = SDKROOT; };
+		65969D54186500A4001CDBC2 /* AudioToolbox.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AudioToolbox.framework; path = System/Library/Frameworks/AudioToolbox.framework; sourceTree = SDKROOT; };
+		65969D5618650228001CDBC2 /* buzzer.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = buzzer.mp3; sourceTree = "<group>"; };
 		65E2F1A61855632E00D439C5 /* QuartzCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuartzCore.framework; path = System/Library/Frameworks/QuartzCore.framework; sourceTree = SDKROOT; };
 /* End PBXFileReference section */
 
@@ -66,6 +70,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				65969D55186500A4001CDBC2 /* AudioToolbox.framework in Frameworks */,
 				65E2F1A71855632E00D439C5 /* QuartzCore.framework in Frameworks */,
 				65767DB1184D7DD200734FED /* CoreBluetooth.framework in Frameworks */,
 				65767D7B184D7D9700734FED /* CoreGraphics.framework in Frameworks */,
@@ -109,6 +114,7 @@
 		65767D77184D7D9700734FED /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				65969D54186500A4001CDBC2 /* AudioToolbox.framework */,
 				65E2F1A61855632E00D439C5 /* QuartzCore.framework */,
 				65767DB0184D7DD200734FED /* CoreBluetooth.framework */,
 				65767D78184D7D9700734FED /* Foundation.framework */,
@@ -137,6 +143,7 @@
 		65767D7F184D7D9700734FED /* Supporting Files */ = {
 			isa = PBXGroup;
 			children = (
+				65969D5618650228001CDBC2 /* buzzer.mp3 */,
 				65767D80184D7D9700734FED /* BTScoreboard-Info.plist */,
 				65767D81184D7D9700734FED /* InfoPlist.strings */,
 				65767D84184D7D9700734FED /* main.m */,
@@ -241,6 +248,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				65767D8F184D7D9700734FED /* Main_iPad.storyboard in Resources */,
+				65969D5718650228001CDBC2 /* buzzer.mp3 in Resources */,
 				65767D94184D7D9700734FED /* Images.xcassets in Resources */,
 				65767D8C184D7D9700734FED /* Main_iPhone.storyboard in Resources */,
 				65767D83184D7D9700734FED /* InfoPlist.strings in Resources */,
