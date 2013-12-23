@@ -6,7 +6,7 @@ The app has had limited testing and has several known shortcomings.
 
 Operation:
 ----------------
-After launching the app, it will search for a BLE device with the name "TI BLE Sensor Tag".  These tags can be purchased through Texas Instruments or their resellers for about $25.  Until found, the app will continue to scan for a BLE device.  This can cause your iOS device to use more power than normal.  If no device is available, the app should be forcibly terminated to avoid unnecessary battery drain.
+After launching the app, it will search for a BLE device with the name "TI BLE Sensor Tag" or "TI BLE Keyfob" (these devices do not advertise services).  These tags can be purchased through Texas Instruments or their resellers for about $25.  The app will initially scan for 10 seconds.  If no device is found, scanning stops and must be restarted by pressing the connection indicator (blue circle) in the top left of the screen.
 
 Once a BLE device is found, the two keys can be used to:
 - Increase Home Score: left key "click"
