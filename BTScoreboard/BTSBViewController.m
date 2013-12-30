@@ -48,6 +48,9 @@ CBCentralManager *cbCentralManager;
 CBPeripheral *cbPeripheral;
 CBUUID *simpleKeyServiceUuid;
 CBUUID *simpleKeyCharUuid;
+bool connected = false;
+const int scanTimeout = 180; // seconds - default timeout for TI devices
+int scanTime;
 
 double lastKeyEventTime;
 const double tapTime = 0.500; // seconds between key events
@@ -63,7 +66,7 @@ enum deviceType
     none,
     tiSensorTag,
     tiKeyFob
-} connectedDevice;
+} discoveredDevice;
 
 NSTimer *gameTimer;
 
@@ -71,18 +74,35 @@ int gameLength;
 
 CFURLRef buzzerFileUrl;
 SystemSoundID buzzerSoundId;
+CFURLRef countdownFileUrl;
+SystemSoundID countdownSoundId;
+CFURLRef startFileUrl;
+SystemSoundID startSoundId;
+CFURLRef stopFileUrl;
+SystemSoundID stopSoundId;
+CFURLRef scoreFileUrl;
+SystemSoundID scoreSoundId;
 
 const int gameLengthOptions[] = {1,2,3,4,5,6,7,8,9,10,15,20,30,45,60,90};
+
+CALayer *connectButtonLayer;
 
 - (void)viewDidLoad
 {
     [super viewDidLoad];
 	// Do any additional setup after loading the view, typically from a nib.
+    connectButtonLayer = [_connectButton layer];
+    [connectButtonLayer setMasksToBounds:YES];
+    [connectButtonLayer setCornerRadius:15.0f];
+    [connectButtonLayer setBorderColor:[UIColor blueColor].CGColor];
+    [connectButtonLayer setBorderWidth:3.0f];
+    [connectButtonLayer setBackgroundColor:nil];
     
     // Allocate the CB central manager as a delegate
     cbCentralManager = [[CBCentralManager alloc] initWithDelegate:self
                                                             queue:nil
                                                           options:nil];
+    
     // Service and characteristic UUID's defined by TI BLE devices
     simpleKeyServiceUuid  = [CBUUID
                     UUIDWithString:@"0000ffe0-0000-1000-8000-00805f9b34fb"];
@@ -105,20 +125,48 @@ const int gameLengthOptions[] = {1,2,3,4,5,6,7,8,9,10,15,20,30,45,60,90};
     lastKeyEventCode = 0;
     lastKeyClickCode = 0;
     
-    connectedDevice = none;
+    discoveredDevice = none;
     
     buzzerFileUrl = (__bridge CFURLRef) [[NSBundle mainBundle]
                                          URLForResource: @"buzzer"
                                          withExtension: @"mp3"];
     AudioServicesCreateSystemSoundID (buzzerFileUrl, &buzzerSoundId);
-    
-    
+    countdownFileUrl = (__bridge CFURLRef) [[NSBundle mainBundle]
+                                            URLForResource: @"countdown"
+                                            withExtension: @"m4a"];
+    AudioServicesCreateSystemSoundID (countdownFileUrl, &countdownSoundId);
+    scoreFileUrl = (__bridge CFURLRef) [[NSBundle mainBundle]
+                                         URLForResource: @"fanfare"
+                                         withExtension: @"m4a"];
+    AudioServicesCreateSystemSoundID (scoreFileUrl, &scoreSoundId);
+    startFileUrl = (__bridge CFURLRef) [[NSBundle mainBundle]
+                                        URLForResource: @"start"
+                                        withExtension: @"m4a"];
+    AudioServicesCreateSystemSoundID (startFileUrl, &startSoundId);
+    stopFileUrl = (__bridge CFURLRef) [[NSBundle mainBundle]
+                                        URLForResource: @"stop"
+                                        withExtension: @"m4a"];
+    AudioServicesCreateSystemSoundID (stopFileUrl, &stopSoundId);
+}
+
+- (void)didReceiveMemoryWarning
+{
+    [super didReceiveMemoryWarning];
+    // Dispose of any resources that can be recreated.
 }
 
 - (void) dealloc
 {
     AudioServicesDisposeSystemSoundID(buzzerSoundId);
     CFRelease(buzzerFileUrl);
+    AudioServicesDisposeSystemSoundID(countdownSoundId);
+    CFRelease(countdownFileUrl);
+    AudioServicesDisposeSystemSoundID(scoreSoundId);
+    CFRelease(scoreFileUrl);
+    AudioServicesDisposeSystemSoundID(stopSoundId);
+    CFRelease(stopFileUrl);
+    AudioServicesDisposeSystemSoundID(startSoundId);
+    CFRelease(startFileUrl);
 }
 
 - (NSInteger)numberOfComponentsInPickerView:(UIPickerView *)pickerView
@@ -172,7 +220,6 @@ const int gameLengthOptions[] = {1,2,3,4,5,6,7,8,9,10,15,20,30,45,60,90};
 
 - (void) tickTimer
 {
-    //NSLog(@"Time: %d", self.timeSeconds);
     self.gameTimeSeconds--;
     [self updateTimer];
     if(self.gameTimeSeconds > 0)
@@ -183,31 +230,81 @@ const int gameLengthOptions[] = {1,2,3,4,5,6,7,8,9,10,15,20,30,45,60,90};
     AudioServicesPlaySystemSound(buzzerSoundId);
 }
 
-- (void)didReceiveMemoryWarning
-{
-    [super didReceiveMemoryWarning];
-    // Dispose of any resources that can be recreated.
-}
-
 // This method must be implemented for the CB central manager delegate
 - (void) centralManagerDidUpdateState:(CBCentralManager *)central
 {
     if (central.state == CBCentralManagerStatePoweredOn)
     {
-        // if the BT stack is powered on...
         NSLog(@"BT powered on");
-        // Begin scanning for TI keys
-        // No services are specified because the TI keys don't advertise
-        // services by default
-        NSLog(@"Scanning for peripherals");
-        [central scanForPeripheralsWithServices:nil options:nil];
+        [self startBleScan];
     } else
     {
         NSLog(@"BT is not on");
+        [connectButtonLayer setBackgroundColor:[UIColor redColor].CGColor];
     }
 }
 
-// This method is implemented for the CB central manager delegate
+- (void) startBleScan
+{
+    scanTime = scanTimeout;
+
+    NSLog(@"Scanning for peripherals");
+
+    // Begin scanning for TI keys
+    // No services are specified because the TI keys don't advertise
+    // services by default so I'm not specifying a service filter.
+    [cbCentralManager scanForPeripheralsWithServices:nil options:nil];
+    [connectButtonLayer setBackgroundColor:nil];
+    [self tickScanner];
+
+}
+
+- (void) tickScanner
+{
+    NSLog(@"Scanning %d seconds", scanTime);
+    if(![gameTimer isValid]) scanTime--;
+    [UIView animateWithDuration:0.5
+                          delay:0
+                        options:UIViewAnimationOptionAllowUserInteraction
+                     animations:^{
+                         [connectButtonLayer setBackgroundColor:
+                          [UIColor blueColor].CGColor];
+                     }
+                     completion:^(BOOL finished){
+                         [UIView animateWithDuration:0.5
+                                               delay:0
+                               options:UIViewAnimationOptionAllowUserInteraction
+                                          animations:^{
+                                              [connectButtonLayer
+                                               setBackgroundColor:nil];
+                                          }
+                                          completion:^(BOOL finished){
+                                              if((scanTime <= 0) &&
+                                                 (!connected))
+                                              {
+                                                  NSLog(@"Scanner expired");
+                                                  [self stopBleScan];
+                                              }
+                                              else if(!connected)
+                                              {
+                                                  [self tickScanner];
+                                              }
+                                              else
+                                              {
+                                                  [connectButtonLayer
+                                                   setBackgroundColor:
+                                                   [UIColor blueColor].CGColor];
+                                              }
+                                          }];
+                     }];
+}
+
+- (void) stopBleScan
+{
+    NSLog(@"Stopping scan");
+    [cbCentralManager stopScan];
+}
+
 - (void)centralManager:(CBCentralManager *)central
  didDiscoverPeripheral:(CBPeripheral *)peripheral
      advertisementData:(NSDictionary *)advertisementData
@@ -219,17 +316,17 @@ const int gameLengthOptions[] = {1,2,3,4,5,6,7,8,9,10,15,20,30,45,60,90};
     if ([peripheral.name compare:@"TI BLE Sensor Tag"] == NSOrderedSame)
     {
         NSLog(@"Discovered TI Sensor Tag");
-        connectedDevice = tiSensorTag;
+        discoveredDevice = tiSensorTag;
     }
     else if ([peripheral.name compare:@"TI BLE Keyfob"] == NSOrderedSame)
     {
         NSLog(@"Discovered TI Key Fob");
-        connectedDevice = tiKeyFob;
+        discoveredDevice = tiKeyFob;
     }
-    if(connectedDevice != none)
+    if(discoveredDevice != none)
     {
         cbPeripheral = peripheral;
-        [cbCentralManager stopScan];
+        [self stopBleScan];
         NSLog(@"Stopped scanning for peripherals");
         [cbCentralManager connectPeripheral:peripheral options:nil];
     }
@@ -243,11 +340,25 @@ const int gameLengthOptions[] = {1,2,3,4,5,6,7,8,9,10,15,20,30,45,60,90};
 - (void)centralManager:(CBCentralManager *)central
   didConnectPeripheral:(CBPeripheral *)peripheral
 {
-    NSLog(@"Connected to peripheral");
+    NSLog(@"Connected to peripheral %@", peripheral.name);
     peripheral.delegate = self;
     [peripheral discoverServices:[NSArray
                                   arrayWithObject:simpleKeyServiceUuid]];
-    
+}
+
+- (void)centralManager:(CBCentralManager *)central
+    didDisconnectPeripheral:(CBPeripheral *)peripheral error:(NSError *)error
+{
+    NSLog(@"Peripheral disconnected");
+    if(connected)
+    {
+        [connectButtonLayer setBackgroundColor:nil];
+        discoveredDevice = none;
+        connected = false;
+        // If disconnected for some reason, try to reconnect once
+        [self startBleScan];
+    }
+    //[self stopBleScan];
 }
 
 - (void)centralManager:(CBCentralManager *)central
@@ -255,9 +366,6 @@ didFailToConnectPeripheral:(CBPeripheral *)peripheral
                  error:(NSError *)error
 {
     NSLog(@"Peripheral connection failed");
-    NSLog(@"Scanning for peripherals");
-    [cbCentralManager scanForPeripheralsWithServices:nil options:nil];
-    
 }
 
 - (void) peripheral:(CBPeripheral *)peripheral
@@ -278,9 +386,6 @@ didDiscoverServices:(NSError *)error
         return;
     }
     NSLog(@"No simple key service found");
-    NSLog(@"Scanning for peripherals");
-    [cbCentralManager scanForPeripheralsWithServices:nil options:nil];
-    
 }
 
 - (void) peripheral:(CBPeripheral *)peripheral
@@ -303,8 +408,6 @@ didDiscoverCharacteristicsForService:(CBService *)service
         return;
     }
     NSLog(@"No simple key characeristic found");
-    NSLog(@"Scanning for peripherals");
-    [cbCentralManager scanForPeripheralsWithServices:nil options:nil];
 }
 
 - (void) peripheral:(CBPeripheral *)peripheral
@@ -314,6 +417,8 @@ didUpdateNotificationStateForCharacteristic:(CBCharacteristic *)characteristic
     if(error == nil)
     {
         NSLog(@"Notification subscription successful");
+        connected = true;
+        [connectButtonLayer setBackgroundColor:[UIColor blueColor].CGColor];
         return;
     }
     NSLog(@"Subscription failed: %@", [error localizedDescription]);
@@ -375,15 +480,17 @@ didUpdateValueForCharacteristic:(CBCharacteristic *)characteristic
                 case 1:
                     lastKeyClickCode = 1;
                     NSLog(@"Left Click");
-                    if(connectedDevice == tiSensorTag) self.visitorScoreValue++;
-                    else self.homeScoreValue++;
+                    if(discoveredDevice == tiSensorTag)
+                        [self visitorSccoreChange:NULL];
+                    else [self homeScoreChange:NULL];
                     [self updateBoard];
                     break;
                 case 2:
                     lastKeyClickCode = 2;
                     NSLog(@"Right Click");
-                    if(connectedDevice == tiSensorTag) self.homeScoreValue++;
-                    else self.visitorScoreValue++;
+                    if(discoveredDevice == tiSensorTag)
+                        [self homeScoreChange:NULL];
+                    else [self visitorSccoreChange:NULL];
                     [self updateBoard];
                     break;
                 case 3:
@@ -426,35 +533,64 @@ didUpdateValueForCharacteristic:(CBCharacteristic *)characteristic
 - (void) startTimer
 {
     NSLog(@"Starting timer");
+    
+    // If this is the game start, play the countdown first
+    if(gameLength == self.gameTimeSeconds)
+    {
+        // Subtract one second for the length of the start tone
+        self.gameTimeSeconds--;
+        AudioServicesAddSystemSoundCompletion(countdownSoundId, NULL, NULL,
+                                              countdownSystemSoundCallback,
+                                              (__bridge void *)(self));
+        AudioServicesPlaySystemSound(countdownSoundId);
+        return;
+    }
+    
     gameTimer = [NSTimer scheduledTimerWithTimeInterval:1
                                                  target:self
                                                selector:@selector(tickTimer)
                                                userInfo:nil repeats:YES];
+    // Keep the screen on when the timer is running
     [[UIApplication sharedApplication] setIdleTimerDisabled: YES];
+}
+
+void countdownSystemSoundCallback(SystemSoundID ssID, void *mySelf)
+{
+    [(__bridge BTSBViewController *)mySelf updateTimer];
+    [(__bridge BTSBViewController *)mySelf startTimer];
+    AudioServicesRemoveSystemSoundCompletion(ssID);
 }
 
 - (void) stopTimer
 {
     NSLog(@"Stopping timer");
     [gameTimer invalidate];
+    // Allow screen to go idle when timer is stopped
+    [[UIApplication sharedApplication] setIdleTimerDisabled: NO];
 }
 
 - (IBAction)homeScoreChange:(id)sender {
     self.homeScoreValue++;
+    AudioServicesPlaySystemSound(scoreSoundId);
     [self updateBoard];
 }
 
 - (IBAction)visitorSccoreChange:(id)sender {
+    NSLog(@"Visitor scores");
     self.visitorScoreValue++;
+    AudioServicesPlaySystemSound(scoreSoundId);
     [self updateBoard];
 }
 
 - (IBAction)timeStartStop:(id)sender {
     if(gameTimer.isValid)
     {
+        AudioServicesPlaySystemSound(stopSoundId);
         [self stopTimer];
         return;
     }
+    if(gameLength != self.gameTimeSeconds)
+        AudioServicesPlaySystemSound(startSoundId);
     [self startTimer];
 }
 
@@ -468,4 +604,11 @@ didUpdateValueForCharacteristic:(CBCharacteristic *)characteristic
 }
 
 
+- (IBAction)connectButtonPress:(id)sender {
+    if(scanTime > 0)
+    {
+        scanTime = 0;
+    }
+    else if (!connected) [self startBleScan];
+}
 @end

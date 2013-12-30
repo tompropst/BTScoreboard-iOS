@@ -7,6 +7,10 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		655EEF551870FCEC003F80F9 /* countdown.m4a in Resources */ = {isa = PBXBuildFile; fileRef = 655EEF541870FCEC003F80F9 /* countdown.m4a */; };
+		655EEF57187106D6003F80F9 /* fanfare.m4a in Resources */ = {isa = PBXBuildFile; fileRef = 655EEF56187106D6003F80F9 /* fanfare.m4a */; };
+		655EEF5A18714BC2003F80F9 /* start.m4a in Resources */ = {isa = PBXBuildFile; fileRef = 655EEF5818714BC2003F80F9 /* start.m4a */; };
+		655EEF5B18714BC2003F80F9 /* stop.m4a in Resources */ = {isa = PBXBuildFile; fileRef = 655EEF5918714BC2003F80F9 /* stop.m4a */; };
 		65767D79184D7D9700734FED /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 65767D78184D7D9700734FED /* Foundation.framework */; };
 		65767D7B184D7D9700734FED /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 65767D7A184D7D9700734FED /* CoreGraphics.framework */; };
 		65767D7D184D7D9700734FED /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 65767D7C184D7D9700734FED /* UIKit.framework */; };
@@ -39,6 +43,10 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		655EEF541870FCEC003F80F9 /* countdown.m4a */ = {isa = PBXFileReference; lastKnownFileType = file; path = countdown.m4a; sourceTree = "<group>"; };
+		655EEF56187106D6003F80F9 /* fanfare.m4a */ = {isa = PBXFileReference; lastKnownFileType = file; path = fanfare.m4a; sourceTree = "<group>"; };
+		655EEF5818714BC2003F80F9 /* start.m4a */ = {isa = PBXFileReference; lastKnownFileType = file; path = start.m4a; sourceTree = "<group>"; };
+		655EEF5918714BC2003F80F9 /* stop.m4a */ = {isa = PBXFileReference; lastKnownFileType = file; path = stop.m4a; sourceTree = "<group>"; };
 		65767D75184D7D9700734FED /* BTScoreboard.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = BTScoreboard.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		65767D78184D7D9700734FED /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
 		65767D7A184D7D9700734FED /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = System/Library/Frameworks/CoreGraphics.framework; sourceTree = SDKROOT; };
@@ -143,6 +151,10 @@
 		65767D7F184D7D9700734FED /* Supporting Files */ = {
 			isa = PBXGroup;
 			children = (
+				655EEF5818714BC2003F80F9 /* start.m4a */,
+				655EEF5918714BC2003F80F9 /* stop.m4a */,
+				655EEF56187106D6003F80F9 /* fanfare.m4a */,
+				655EEF541870FCEC003F80F9 /* countdown.m4a */,
 				65969D5618650228001CDBC2 /* buzzer.mp3 */,
 				65767D80184D7D9700734FED /* BTScoreboard-Info.plist */,
 				65767D81184D7D9700734FED /* InfoPlist.strings */,
@@ -251,7 +263,11 @@
 				65969D5718650228001CDBC2 /* buzzer.mp3 in Resources */,
 				65767D94184D7D9700734FED /* Images.xcassets in Resources */,
 				65767D8C184D7D9700734FED /* Main_iPhone.storyboard in Resources */,
+				655EEF57187106D6003F80F9 /* fanfare.m4a in Resources */,
+				655EEF551870FCEC003F80F9 /* countdown.m4a in Resources */,
 				65767D83184D7D9700734FED /* InfoPlist.strings in Resources */,
+				655EEF5A18714BC2003F80F9 /* start.m4a in Resources */,
+				655EEF5B18714BC2003F80F9 /* stop.m4a in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

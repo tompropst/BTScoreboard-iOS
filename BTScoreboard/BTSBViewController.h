@@ -34,5 +34,7 @@
 @interface BTSBViewController : UIViewController <CBCentralManagerDelegate,
 CBPeripheralDelegate, UIPickerViewDataSource, UIPickerViewDelegate>
 @property (weak, nonatomic) IBOutlet UIPickerView *gameLengthPicker;
+@property (weak, nonatomic) IBOutlet UIButton *connectButton;
+- (IBAction)connectButtonPress:(id)sender;
 
 @end
